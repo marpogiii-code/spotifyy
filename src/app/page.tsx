@@ -1,9 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import TopBar from "@/components/TopBar";
 import PlaylistCard from "@/components/PlaylistCard";
+import SongRow from "@/components/SongRow";
 import { playlists, songs } from "@/lib/data";
 import { usePlayerStore } from "@/store/playerStore";
+import { useUploadStore } from "@/store/uploadStore";
 import { Play } from "lucide-react";
 
 function QuickPlayCard({
@@ -41,6 +44,12 @@ function QuickPlayCard({
 }
 
 export default function HomePage() {
+  const { uploadedSongs, fetchUploadedSongs } = useUploadStore();
+
+  useEffect(() => {
+    fetchUploadedSongs();
+  }, [fetchUploadedSongs]);
+
   const greeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
@@ -84,6 +93,23 @@ export default function HomePage() {
             ))}
           </div>
         </section>
+
+        {/* Uploaded Songs */}
+        {uploadedSongs.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Uploaded Songs</h2>
+            <div>
+              {uploadedSongs.map((song, i) => (
+                <SongRow
+                  key={song.id}
+                  song={song}
+                  index={i}
+                  queue={uploadedSongs}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Popular Playlists */}
         <section className="mb-8">
