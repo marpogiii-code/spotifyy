@@ -60,13 +60,20 @@ export async function getCurrentUser(): Promise<User | null> {
   if (!payload) return null;
 
   const user = users.get(payload.userId);
-  if (!user) return null;
+  if (user) {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      image: user.image,
+      createdAt: user.createdAt,
+    };
+  }
 
   return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    image: user.image,
-    createdAt: user.createdAt,
+    id: payload.userId,
+    email: payload.email,
+    name: payload.name,
+    createdAt: new Date().toISOString(),
   };
 }
