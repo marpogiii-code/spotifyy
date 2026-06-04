@@ -1,17 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TopBar from "@/components/TopBar";
 import SongRow from "@/components/SongRow";
 import PlaylistCard from "@/components/PlaylistCard";
 import { searchSongs, searchPlaylists, searchArtists, playlists } from "@/lib/data";
+import { useUploadStore } from "@/store/uploadStore";
 import { Search } from "lucide-react";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
+  const { uploadedSongs, fetchUploadedSongs } = useUploadStore();
+
+  useEffect(() => {
+    fetchUploadedSongs();
+  }, [fetchUploadedSongs]);
+
   const songResults = query ? searchSongs(query) : [];
   const playlistResults = query ? searchPlaylists(query) : [];
   const artistResults = query ? searchArtists(query) : [];
+
+  const uploadedResults = query
+    ? uploadedSongs.filter(
+        (s) =>
+          s.title.toLowerCase().includes(query.toLowerCase()) ||
+          s.artist.toLowerCase().includes(query.toLowerCase()) ||
+          s.album.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
+
+  const allSongResults = [...songResults, ...uploadedResults];
 
   const genres = [
     { name: "Pop", color: "from-pink-500 to-pink-800" },
@@ -73,16 +91,16 @@ export default function SearchPage() {
             )}
 
             {/* Song Results */}
-            {songResults.length > 0 && (
+            {allSongResults.length > 0 && (
               <section className="mb-8">
                 <h2 className="text-xl font-bold mb-4">Songs</h2>
                 <div>
-                  {songResults.map((song, i) => (
+                  {allSongResults.map((song, i) => (
                     <SongRow
                       key={song.id}
                       song={song}
                       index={i}
-                      queue={songResults}
+                      queue={allSongResults}
                     />
                   ))}
                 </div>
@@ -101,7 +119,7 @@ export default function SearchPage() {
               </section>
             )}
 
-            {songResults.length === 0 &&
+            {allSongResults.length === 0 &&
               playlistResults.length === 0 &&
               artistResults.length === 0 && (
                 <div className="text-center py-16">

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import { ChevronLeft, ChevronRight, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Upload } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
@@ -61,6 +61,16 @@ export default function TopBar() {
                 >
                   Your Library
                 </Link>
+                {user.email === "mar23pogi@gmail.com" && (
+                  <Link
+                    href="/upload"
+                    className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition text-spotify-green"
+                    onClick={() => setShowMenu(false)}
+                  >
+                    <Upload size={14} />
+                    Upload Music
+                  </Link>
+                )}
                 <hr className="border-zinc-700 my-1" />
                 <button
                   onClick={() => {
